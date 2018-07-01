@@ -33,14 +33,12 @@ class TaskControll {
   }
 
   done(task) {
-    setTimeout(() => {
-      task.success && task.success();
-      this.curTaskList.splice(
-        this.curTaskList.findIndex(item => item === task),
-        1
-      );
-      this.run();
-    }, 1000);
+    task.success && task.success();
+    this.curTaskList.splice(
+      this.curTaskList.findIndex(item => item === task),
+      1
+    );
+    this.run();
   }
 
   error(task) {

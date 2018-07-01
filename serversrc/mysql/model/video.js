@@ -6,16 +6,19 @@ module.exports = {
   },
   getVideo() {},
   insertVideo(video) {
-    let keys = [],
-      values = [];
-    for (const key in video) {
-      if (video.hasOwnProperty(key)) {
-        keys.push(key);
-        values.push(video[key]);
-      }
-    }
+    var keys = Object.keys(video),
+      values = Object.values(video);
     //增加数据
     var addsql = `INSERT INTO videos(${keys}) VALUES(${keys.map(() => "?")})`;
     return pool(addsql, values);
+  },
+  searchVideo(video) {
+    var sqlFilter = Object.keys(video)
+      .map(key => `${key} = '${video[key]}'`)
+      .join(" and ");
+    //增加数据
+    var addsql = `SELECT * FROM videos WHERE ${sqlFilter}`;
+
+    return pool(addsql);
   }
 };
