@@ -12,8 +12,9 @@ class Video {
   }
 
   _init($video) {
-    this.name = $video.find(".video-title").text();
     this.url = $video.find("a").attr("href");
+
+    this.name = $video.find(".video-title").text();
     this.thumb = $video.find(".video-thumb>img").attr("src"); //缩略图
     this.duration = $video.find(".video-duration").text(); //时间
     this.rating = $video
@@ -44,7 +45,6 @@ class Video {
               .find("source")
               .eq(1)
               .attr("src");
-            console.log("写入数据库");
             sqlVideo.insertVideo(this).then(successHandle, errorHandler);
           })
           .catch(errorHandler);
