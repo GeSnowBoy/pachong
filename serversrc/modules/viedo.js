@@ -1,10 +1,9 @@
 var httpGet = require("../tools/http").httpGet;
 var config = require("../config");
-var downConfig = {
-  max: 5,
-  willDown: [],
-  curDown: []
-};
+var sqlVideo = require("../mysql/model/video");
+var TaskControll = require("../units").TaskControll;
+var taskControll = new TaskControll();
+
 var videoControll = require("./videoControll");
 
 class Video {
@@ -13,7 +12,6 @@ class Video {
   }
 
   _init($video) {
-    console.log(`初始化视频`);
     this.name = $video.find(".video-title").text();
     this.url = $video.find("a").attr("href");
     this.thumb = $video.find(".video-thumb>img").attr("src"); //缩略图
@@ -31,38 +29,27 @@ class Video {
     this.downTime = 0; // 尝试下载次数
     this.isDownComplete = false; // 是否下载
     this.isDowning = false; // 是否在下载中
-    console.log(`获取视频资源地址`);
-    let { max, willDown, curDown } = downConfig;
-    let self = this;
-
-    function add(tempVideo) {
-      if (willDown.length >= max) {
-        willDown.push(tempVideo);
-      } else {
-        curDown.push(tempVideo);
-        httpGet(`${config.baseUrl}${self.url}`).then(({ $, html }) => {
-          var $video = $("video").eq(0);
-          self.poster = $video.attr("poster");
-          self.source240 = $video
-            .find("source")
-            .eq(0)
-            .attr("src");
-          self.source = $video
-            .find("source")
-            .eq(1)
-            .attr("src");
-          // videoControll.down(self)
-          downNext(self);
-        });
+    taskControll.add({
+      run: (successHandle, errorHandler) => {
+        console.log(`发送获取视频地址请求`);
+        httpGet(`${config.baseUrl}${this.url}`)
+          .then(({ $, html }) => {
+            var $video = $("video").eq(0);
+            this.poster = $video.attr("poster");
+            this.source240 = $video
+              .find("source")
+              .eq(0)
+              .attr("src");
+            this.source = $video
+              .find("source")
+              .eq(1)
+              .attr("src");
+            console.log("写入数据库");
+            sqlVideo.insertVideo(this).then(successHandle, errorHandler);
+          })
+          .catch(errorHandler);
       }
-    }
-
-    add(this);
-
-    function downNext(video) {
-      curDown.splice(curDown.findIndex(item => item === video), 1);
-      willDown.length && add(willDown.unshift());
-    }
+    });
   }
 }
 

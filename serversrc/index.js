@@ -1,10 +1,12 @@
-// require('./main')
+var getRadioList = require("./main"),
+  baseUrl = require("./config").baseUrl;
+for (let i = 700; i < 796; i++) {
+  getRadioList(baseUrl + "recent/" + i + "/");
+}
 
 let express = require("express");
 let app = express();
 let apis = require("./apis");
-app.get("/", function(req, res) {
-  res.send("hello world");
-});
+
 app.use("/api", apis);
 app.listen(8031);

@@ -1,5 +1,5 @@
 <template>
-    <a class="pp-video" target="_blank" :href="'http://www.aotu46.com/'+videoData.url">
+    <a class="pp-video" target="_blank" :href="videoData.source">
         <div class="video-thumb-wrap">
             <img :src="videoData.thumb" alt="">
         </div>

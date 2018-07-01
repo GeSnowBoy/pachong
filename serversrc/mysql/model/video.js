@@ -16,14 +16,6 @@ module.exports = {
     }
     //增加数据
     var addsql = `INSERT INTO videos(${keys}) VALUES(${keys.map(() => "?")})`;
-    pool(addsql, values)
-      .then(function(result) {
-        console.log("-----------------新增成功----------------");
-        return Promise.resolve(result);
-      })
-      .catch(e => {
-        if (e.sqlState === "23000") console.log(`该条视频已经存在`);
-        console.log(`新增失败`);
-      });
+    return pool(addsql, values);
   }
 };

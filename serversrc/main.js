@@ -1,17 +1,24 @@
 var httpGet = require("./tools/http").httpGet;
-var fs = require("fs");
 var Video = require("./modules/viedo");
-var config = require("./config");
-var sqlVideo = require("./mysql").video;
-
-httpGet(config.baseUrl).then(({ $, html }) => {
-  console.log(`获取视频列表成功`);
-  let $viedos = $(".videos>li"),
-    videos = [];
-  $viedos.each((index, el) => {
-    var temp = new Video($(el));
-    videos.push(temp);
-    // 写入数据库
-    sqlVideo.insertVideo(temp);
+var TaskControll = require("./units").TaskControll;
+var taskControll = new TaskControll({ maxTaskNum: 2 });
+var time = 0;
+module.exports = url => {
+  var _time = ++time;
+  taskControll.add({
+    run: (successHandle, errorHandle) => {
+      httpGet(url).then(
+        ({ $, html }) => {
+          successHandle();
+          console.log(`这是第${_time}个列表`);
+          $(".videos>li").each((index, el) => {
+            new Video($(el));
+          });
+        },
+        e => {
+          errorHandle(e);
+        }
+      );
+    }
   });
-});
+};
