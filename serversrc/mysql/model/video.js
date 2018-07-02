@@ -20,5 +20,15 @@ module.exports = {
     var addsql = `SELECT * FROM videos WHERE ${sqlFilter}`;
 
     return pool(addsql);
+  },
+  update(video) {
+    var setSql =
+      Object.keys(video)
+        .map(key => {
+          return `${key} = '${video[key]}'`;
+        })
+        .join(",") + `WHERE id = ${video.id}`;
+    var sql = `UPDATE videos SET ${setSql}`;
+    return pool(sql);
   }
 };

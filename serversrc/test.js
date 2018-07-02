@@ -1,13 +1,9 @@
+var videoDown = require("./modules/videoDown");
 var sqlVideo = require("./mysql").video;
 sqlVideo
   .searchVideo({
-    id: 1474
+    id: 2071
   })
-  .then(
-    res => {
-      console.log(res.length);
-    },
-    res => {
-      console.log(res);
-    }
-  );
+  .then(res => {
+    videoDown(res[0]);
+  });

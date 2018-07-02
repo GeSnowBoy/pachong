@@ -4,7 +4,7 @@ var sqlVideo = require("../mysql/model/video");
 var TaskControll = require("../units").TaskControll;
 var taskControll = new TaskControll({ maxTaskNum: 20 });
 
-var videoControll = require("./videoControll");
+var videoControll = require("./videoDown");
 
 class Video {
   constructor($video) {
