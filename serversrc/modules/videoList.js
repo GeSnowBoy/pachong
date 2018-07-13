@@ -8,6 +8,7 @@ module.exports = url => {
     run: (successHandle, errorHandle) => {
       httpGet(url).then(
         ({ $, html }) => {
+          // console.log(`列表下载成功${url}`)
           successHandle();
           $(".videos>li").each((index, el) => {
             new Video($(el));

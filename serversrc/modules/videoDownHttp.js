@@ -17,7 +17,7 @@ var down = video => {
           console.log(`${videoUrl}已存在`);
           resolve(video);
         } else {
-          console.log("视频下载呗");
+          console.log("视频开始下载了");
           http
             .get(url, res => {
               if (res.statusCode > 300 && res.statusCode < 400) {
@@ -47,7 +47,7 @@ var down = video => {
               }
             })
             .on("error", () => {
-              console.log("!!!!!!!!!!!@@@@@@@@@@@@视频下载玩完了呗");
+              console.log("视频下载玩完了呗");
               reject(video);
             });
         }

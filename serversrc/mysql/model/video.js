@@ -14,7 +14,10 @@ module.exports = {
   },
   searchVideo(video) {
     var sqlFilter = Object.keys(video)
-      .map(key => `${key} = '${video[key]}'`)
+      .map(
+        key =>
+          video[key] === null ? `ISNULL(${key})` : `${key} = '${video[key]}'`
+      )
       .join(" and ");
     //增加数据
     var addsql = `SELECT * FROM videos WHERE ${sqlFilter}`;
