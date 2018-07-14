@@ -16,7 +16,7 @@ class Video {
     this.name = $video.find(".video-title").text();
     sqlVideo.searchVideo({ name: this.name }).then(
       res => {
-        if (res[0] && res[0].isDownComplete) return;
+        if (res[0] && (res[0].isDownComplete || res[0].isCheckGood)) return;
         this.url = $video.find("a").attr("href");
         this.thumb = $video.find(".video-thumb>img").attr("src"); //缩略图
         this.duration = $video.find(".video-duration").text(); //时间
@@ -29,15 +29,8 @@ class Video {
           .text()
           .replace(/[\n\t]/g, ""); //发布时间
         this.views = +$video.find(".video-views").text(); //关看数
-
-        if (!res.length) {
-          this.downTime = 0; // 尝试下载次数
-          this.isDownComplete = false; // 是否下载
-          this.isDowning = false; // 是否在下载中
-        }
         taskControll.add({
           run: (successHandle, errorHandler) => {
-            console.count("统计调用video");
             httpGet(`${config.baseUrl}${this.url}`)
               .then(({ $, html }) => {
                 // console.log(`获取视频信息成功${config.baseUrl}${this.url}`)
@@ -52,13 +45,11 @@ class Video {
                   .eq(1)
                   .attr("src");
                 if (!res.length) {
+                  this.downTime = 0; // 尝试下载次数
+                  this.isDownComplete = false; // 是否下载
+                  this.isDowning = false; // 是否在下载中
                   sqlVideo.insertVideo(this).then(successHandle, errorHandler);
                 } else {
-                  for (const key in this) {
-                    if (typeof this[key] === "boolean") {
-                      this[key] = this[key] ? 1 : 0;
-                    }
-                  }
                   console.count("视频更新");
                   sqlVideo
                     .update(Object.assign({}, res[0], this))

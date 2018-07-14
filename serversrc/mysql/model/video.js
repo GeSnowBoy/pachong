@@ -25,6 +25,11 @@ module.exports = {
     return pool(addsql);
   },
   update(video) {
+    for (const key in video) {
+      if (typeof video[key] === "boolean") {
+        video[key] = video[key] ? 1 : 0;
+      }
+    }
     var setSql =
       Object.keys(video)
         .map(key => {
