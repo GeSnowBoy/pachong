@@ -1,7 +1,7 @@
 <template>
-    <a class="pp-video" target="_blank"
-       :title="videoData.name"
-       :href="'http://192.168.0.108:8031/'+videoData.localUrl.replace('dist/videos/','')">
+    <div class="pp-video"
+         @click="$emit('click',videoData)"
+         :title="videoData.name">
         <div class="video-thumb-wrap">
             <img :src="videoData.thumb" alt="">
         </div>
@@ -12,7 +12,7 @@
                 <span class="video-play-time">时长:{{videoData.duration}}</span>
             </div>
         </div>
-    </a>
+    </div>
 </template>
 
 <script>
@@ -59,6 +59,7 @@ export default {
       text-align: left;
       margin: 10px 0;
       line-height: 25px;
+      height: 50px;
       color: #333;
     }
     .video-time-wrap {

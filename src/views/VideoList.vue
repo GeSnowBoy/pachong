@@ -1,7 +1,23 @@
 <template>
     <div class="video-list-wrap">
         <div class="video-list">
-            <pp-video class="video-item" :key="item.name" v-for="item in videos" :video-data="item"/>
+            <pp-video
+                    @click="curPlayVideo = $event"
+                    class="video-item" :key="item.name" v-for="item in videos" :video-data="item"/>
+        </div>
+        <div class="play-wrap" v-if="curPlayVideo" @click="curPlayVideo = null">
+            <el-button class="close-btn" icon="el-icon-circle-close-outline" circle
+                       @click="curPlayVideo = null"></el-button>
+            <div @click.stop.prevent>
+                <video-player
+
+                        class="video-player vjs-custom-skin"
+                        ref="videoPlayer"
+                        :playsinline="true"
+                        :options="playerOptions"
+                >
+                </video-player>
+            </div>
         </div>
         <div class="page-wrap">
             <el-pagination
@@ -25,6 +41,7 @@ export default {
   components: { PpVideo },
   data() {
     return {
+      curPlayVideo: null,
       videos: [],
       page: {
         size: 10,
@@ -64,23 +81,54 @@ export default {
           );
       }
     }
+  },
+  computed: {
+    playerOptions() {
+      let { curPlayVideo } = this;
+      return {
+        height: "500",
+        autoplay: true,
+        muted: false,
+        language: "en",
+        playbackRates: [0.7, 1.0, 1.5, 2.0, 3.0, 4.0, 10],
+        sources: [
+          {
+            type: "video/mp4",
+            src: `http://192.168.0.108:8031/${curPlayVideo.localUrl.replace(
+              "dist/videos/",
+              ""
+            )}`
+          }
+        ],
+        poster: curPlayVideo.thumb
+      };
+    }
   }
 };
 </script>
 <style scoped lang="scss">
-.about {
-  .video-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-  .video-item {
-    flex: 1;
-  }
-}
-
 .page-wrap {
   margin: 50px auto;
   text-align: center;
+}
+
+.play-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  min-height: 100%;
+  background: #000;
+  .close-btn {
+    float: right;
+    margin: 40px 50px;
+    position: relative;
+    z-index: 10001;
+  }
+  .video-player {
+    width: 80%;
+    margin: 50px auto;
+  }
 }
 </style>
